@@ -4,56 +4,32 @@
 
 ---
 
-# 📌 Sobre o Projeto
+## 📌 Sobre o Projeto
 
-A **Symulus** é uma plataforma SaaS inteligente de preparação para certificações profissionais.
+A **Symulus** é uma plataforma SaaS EdTech de preparação inteligente para certificações profissionais.
 
-O objetivo é transformar conteúdos oficiais de certificações em experiências personalizadas de aprendizado utilizando Inteligência Artificial.
+O produto não é apenas um banco de questões. A proposta é funcionar como um **mentor inteligente de preparação**, combinando:
 
-A plataforma permite que profissionais:
+- conteúdo oficial das certificações;
+- simulados personalizados;
+- inteligência artificial;
+- análise de desempenho;
+- evolução contínua.
 
-- realizem simulados inteligentes;
-- pratiquem questões baseadas no syllabus oficial;
-- recebam explicações contextualizadas;
-- acompanhem sua evolução;
-- identifiquem pontos de melhoria.
+A Symulus ajuda profissionais a transformar estudo disperso em uma preparação estruturada, alinhada ao conteúdo oficial da certificação.
 
 ---
 
 # 🎯 Visão do Produto
 
-A Symulus não é apenas um banco de questões.
+A preparação para certificações normalmente envolve:
 
-A proposta é funcionar como um **mentor inteligente de preparação para certificações**.
+- grande volume de conteúdo;
+- dificuldade para identificar pontos de melhoria;
+- simulados genéricos;
+- materiais fora do escopo oficial.
 
-O produto combina:
-
-```text
-Conteúdo Oficial
-        +
-Inteligência Artificial
-        +
-Análise de Desempenho
-        +
-Evolução Personalizada
-```
-
----
-
-# 🧩 Primeiro Produto
-
-## Symulus CTFL
-
-Primeira certificação suportada:
-
-**ISTQB Certified Tester Foundation Level (CTFL)**
-
-A escolha do CTFL permite validar o modelo do produto através de:
-
-- syllabus oficial estruturado;
-- público-alvo definido;
-- conteúdo adequado para MVP;
-- alta aderência ao mercado de tecnologia.
+A Symulus resolve esse problema utilizando o syllabus oficial como fonte de conhecimento e aplicando inteligência para orientar a evolução do usuário.
 
 ---
 
@@ -63,125 +39,266 @@ A escolha do CTFL permite validar o modelo do produto através de:
 
 ---
 
-# 👤 Público-Alvo
+# 🏆 Primeiro Produto
 
-Profissionais de tecnologia buscando certificações:
+## Symulus CTFL
 
-- QA Engineers;
-- Analistas de Testes;
-- Desenvolvedores;
-- Profissionais buscando evolução de carreira.
+Primeira certificação suportada:
+
+**ISTQB Certified Tester Foundation Level (CTFL)**
+
+A CTFL foi escolhida para validar o MVP devido a:
+
+- syllabus estruturado;
+- público de tecnologia definido;
+- alinhamento com profissionais de QA;
+- escopo adequado para validação inicial.
 
 ---
 
-# 🏗 Arquitetura Geral
+# 🚀 Objetivo do MVP
 
-Visão simplificada:
+O MVP tem como objetivo validar o fluxo completo de preparação.
 
-```text
-                    Usuário
+Fluxo principal:
 
-                       ↓
+```
+Usuário acessa a plataforma
 
-              Frontend Web
+↓
 
-                       ↓
+Escolhe certificação CTFL
 
-               Backend API
+↓
 
-                       ↓
+Realiza simulado gratuito
 
-        ┌──────────────┼──────────────┐
+↓
 
-        ↓              ↓              ↓
+Recebe resultado e explicações
 
-    Database          IA             Auth
+↓
 
-    PostgreSQL        RAG            Usuário
+Cria conta
+
+↓
+
+Acompanha evolução
 ```
 
 ---
 
-# 🛠 Stack Tecnológica
+## Funcionalidades do MVP
 
-## Frontend
+### Landing Page
 
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
-- Shadcn/UI
+Apresentação da proposta da Symulus.
 
 ---
 
-## Backend
+### Simulado gratuito
 
-- Node.js
-- TypeScript
-- REST API
+Usuário visitante pode:
 
----
+- escolher CTFL;
+- responder 5 questões;
+- visualizar resultado;
+- receber explicações.
 
-## Banco de Dados
-
-- PostgreSQL
-
-Possível utilização:
-
-- Supabase
+O cadastro não é obrigatório para primeira experiência.
 
 ---
 
-## Inteligência Artificial
+### Cadastro
 
-Arquitetura:
+Usuários cadastrados poderão:
 
-**RAG (Retrieval Augmented Generation)**
+- salvar histórico;
+- acompanhar desempenho;
+- acessar dashboard;
+- receber recomendações.
 
-A IA utiliza conteúdos oficiais como fonte para gerar:
+---
 
-- questões;
-- explicações;
-- análises de desempenho;
+### Dashboard
+
+Permite acompanhar:
+
+- evolução;
+- histórico de simulados;
+- desempenho por assunto;
 - recomendações.
 
-Fluxo:
+---
 
-```text
-Syllabus Oficial
+# 🤖 Inteligência Artificial
 
-        ↓
+A Symulus utiliza Inteligência Artificial baseada em **RAG (Retrieval Augmented Generation)**.
 
-Processamento
+Princípio:
 
-        ↓
+> A inteligência gera, o conhecimento oficial valida.
 
-Base Vetorial
+---
 
-        ↓
+## Estratégia no MVP
 
-Busca Contextual
+A IA não participa da geração de questões durante o simulado.
 
-        ↓
+O fluxo é:
 
-IA Generativa
+```
+Syllabus oficial
 
-        ↓
+↓
 
-Questões e Insights
+Processamento do conteúdo
+
+↓
+
+Geração assistida de questões
+
+↓
+
+Validação
+
+↓
+
+Banco de questões
+
+↓
+
+Simulado do usuário
 ```
 
 ---
 
-# 📚 Documentação do Projeto
+A IA será utilizada para:
 
-A documentação completa está organizada em:
+- criação assistida de questões;
+- geração de explicações;
+- análise de desempenho;
+- recomendações de estudo.
+
+A fonte de verdade permanece sendo o conteúdo oficial da certificação.
+
+---
+
+# 🏗 Arquitetura
+
+A Symulus utiliza arquitetura monorepo:
 
 ```
-/docs
+symulus/
+
+├── frontend/
+├── backend/
+├── database/
+├── docs/
+└── README.md
 ```
 
-Estrutura:
+---
+
+# 🖥 Frontend
+
+Tecnologias:
+
+- Next.js;
+- React;
+- TypeScript;
+- Tailwind CSS;
+- Shadcn/UI.
+
+Responsável por:
+
+- interface;
+- experiência do usuário;
+- fluxo de simulados;
+- dashboard.
+
+---
+
+# ⚙ Backend
+
+Tecnologias:
+
+- Node.js;
+- TypeScript;
+- Fastify;
+- REST API;
+- Prisma ORM.
+
+Responsável por:
+
+- regras de negócio;
+- APIs;
+- autenticação;
+- processamento dos simulados.
+
+---
+
+# 🗄 Banco de Dados
+
+Tecnologias:
+
+- PostgreSQL;
+- Supabase.
+
+Principais entidades:
+
+- usuários;
+- certificações;
+- syllabus;
+- questões;
+- simulados;
+- respostas;
+- desempenho.
+
+---
+
+# 🔐 Autenticação
+
+A autenticação será realizada utilizando:
+
+```
+Supabase Auth
+```
+
+Método inicial:
+
+- email;
+- senha.
+
+A aplicação não armazena senhas próprias.
+
+---
+
+# 🎨 Design System
+
+A identidade visual segue:
+
+- Navy `#0B1026`
+- Purple `#6D4AFF`
+- Blue `#3B82F6`
+- Fundo `#F8FAFC`
+
+Princípios:
+
+- tecnologia;
+- confiança;
+- inteligência;
+- clareza.
+
+Documentação:
+
+```
+docs/design/
+```
+
+---
+
+# 📚 Estrutura da Documentação
 
 ```
 docs/
@@ -191,50 +308,61 @@ docs/
 │   ├── product-vision.md
 │   ├── requirements.md
 │   ├── functional-specification.md
-│   └── mvp-plan.md
+│   ├── user-journey.md
+│   └── mvp-decisions.md
 │
 ├── design/
 │   ├── brand-identity.md
 │   ├── design-system.md
 │   ├── ux-flow-wireframes.md
-│   └── user-journey.md
+│   ├── screen-specifications.md
+│   └── screens/
 │
 ├── engineering/
 │   ├── architecture.md
 │   ├── database-model.md
-│   └── api-specification.md
+│   ├── api-specification.md
+│   ├── project-structure.md
+│   └── technical-decisions.md
 │
-├── ai/
-│   ├── ai-rag-strategy.md
-│   └── ai-development-guide.md
-│
-└── assets/
-    └── logo.png
-```
-
----
-
-# 🗂 Estrutura do Projeto
-
-```
-symulus/
-
-├── README.md
-
-├── docs/
-
-├── frontend/
-
-├── backend/
-
-├── database/
-
 └── ai/
+    ├── ai-rag-strategy.md
+    └── ai-development-guide.md
 ```
 
 ---
 
-# 🚦 Status do Projeto
+# 🤖 Desenvolvimento Assistido por IA
+
+A Symulus utiliza ferramentas de Inteligência Artificial durante o desenvolvimento.
+
+Antes de implementar qualquer funcionalidade, agentes devem consultar:
+
+1. `README.md`
+2. documentação em `/docs`
+3. `docs/engineering/technical-decisions.md`
+
+Decisões técnicas documentadas possuem prioridade sobre interpretações próprias dos agentes.
+
+---
+
+# 🚫 Fora do MVP
+
+Não fazem parte da primeira versão:
+
+- pagamentos;
+- planos premium;
+- comunidade;
+- ranking;
+- gamificação;
+- marketplace;
+- múltiplas certificações;
+- tutor conversacional;
+- plano de estudos automático.
+
+---
+
+# 📍 Status do Projeto
 
 ## Fase atual
 
@@ -242,95 +370,16 @@ symulus/
 
 ---
 
-## Concluído
+## Próximas etapas
 
-✅ Nome e posicionamento da marca  
-✅ Identidade visual  
-✅ Visão do produto  
-✅ Jornada do usuário  
-✅ UX/UI MVP  
-✅ Design System  
-✅ Arquitetura inicial  
-✅ Estratégia IA/RAG  
-✅ Modelo de dados  
-✅ Especificação de APIs  
-✅ Guia de desenvolvimento com IA
-
----
-
-# 🎯 Objetivo do MVP
-
-Construir uma primeira versão funcional capaz de:
-
-1. Apresentar a plataforma;
-2. Permitir um simulado gratuito sem cadastro;
-3. Gerar questões baseadas no syllabus CTFL;
-4. Corrigir respostas;
-5. Apresentar explicações;
-6. Permitir cadastro;
-7. Registrar evolução do usuário.
-
----
-
-# 🔐 Princípios do Produto
-
-## Conteúdo confiável
-
-A IA deve utilizar fontes oficiais da certificação.
-
----
-
-## IA controlada
-
-A inteligência artificial deve complementar o conhecimento, não substituir a fonte oficial.
-
----
-
-## Experiência simples
-
-O usuário deve conseguir iniciar sua preparação rapidamente.
-
----
-
-## Evolução contínua
-
-A plataforma deve mostrar:
-
-- onde o usuário está;
-- onde precisa melhorar;
-- qual próximo passo seguir.
-
----
-
-# 🤖 Desenvolvimento com IA
-
-A Symulus será desenvolvida utilizando ferramentas de Inteligência Artificial.
-
-Antes de implementar qualquer funcionalidade:
-
-1. Consultar os documentos em `/docs`;
-2. Seguir a arquitetura definida;
-3. Respeitar o Design System;
-4. Evitar alterações fora do escopo do MVP;
-5. Manter código simples, organizado e escalável.
-
-Documento principal para agentes de IA:
-
-```
-docs/ai/ai-development-guide.md
-```
-
----
-
-# 📍 Próximos Passos
-
-1. Organizar estrutura inicial do projeto;
-2. Configurar frontend;
-3. Configurar backend;
-4. Configurar banco de dados;
-5. Implementar autenticação;
-6. Integrar IA/RAG;
-7. Construir fluxo completo de simulado.
+1. Configuração do ambiente;
+2. Criação do frontend;
+3. Criação do backend;
+4. Configuração do banco;
+5. Implementação do fluxo de simulado;
+6. Autenticação;
+7. Dashboard;
+8. Integração IA/RAG.
 
 ---
 
