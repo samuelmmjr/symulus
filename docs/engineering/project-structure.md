@@ -1,4 +1,4 @@
-# 🏗️ Project Structure — Symulus
+# 🏗️ Project Structure --- Symulus
 
 ## Objetivo
 
@@ -18,19 +18,31 @@ Toda implementação deve respeitar esta estrutura.
 
 # 1. Estrutura Geral do Projeto
 
-A Symulus será organizada em três principais áreas:
+A Symulus será organizada em áreas principais:
 
-```
+```text
 symulus/
 
 ├── frontend/
 ├── backend/
-├── database/
-│
 ├── docs/
-│
 ├── README.md
 └── .env.example
+```
+
+O banco de dados e suas migrations serão gerenciados pelo backend
+utilizando Prisma ORM.
+
+A estrutura oficial de persistência:
+
+```text
+backend/
+
+├── prisma/
+│
+├── src/
+│
+└── prisma.config.ts
 ```
 
 ---
@@ -53,25 +65,25 @@ Tecnologias definidas:
 
 ## Estrutura esperada
 
-```
+```text
 frontend/
 
 ├── src/
-│
-│── app/
-│
-│── components/
-│
-│── features/
-│
-│── hooks/
-│
-│── services/
-│
-│── types/
-│
-│── utils/
-│
+
+├── app/
+
+├── components/
+
+├── features/
+
+├── hooks/
+
+├── services/
+
+├── types/
+
+├── utils/
+
 └── styles/
 ```
 
@@ -85,17 +97,13 @@ Responsável pelas páginas e rotas.
 
 Exemplo:
 
-```
+```text
 app/
 
 ├── page.tsx
-
 ├── login/
-
 ├── signup/
-
 ├── simulation/
-
 └── dashboard/
 ```
 
@@ -105,62 +113,22 @@ app/
 
 Componentes reutilizáveis.
 
-Exemplo:
-
-```
-components/
-
-├── Button
-
-├── Card
-
-├── Header
-
-├── Sidebar
-
-└── ProgressChart
-```
-
 ---
 
 ## features/
 
 Organização por domínio.
 
-Cada funcionalidade deve conter seus próprios componentes e regras.
-
 Exemplo:
 
-```
+```text
 features/
 
 ├── authentication/
-
 ├── certification/
-
 ├── simulation/
-
 ├── dashboard/
-
 └── recommendations/
-```
-
----
-
-## services/
-
-Comunicação com APIs.
-
-Exemplo:
-
-```
-services/
-
-├── api.ts
-
-├── auth.service.ts
-
-├── simulation.service.ts
 ```
 
 ---
@@ -169,30 +137,42 @@ services/
 
 ## Responsabilidade
 
-Responsável pelas regras de negócio, APIs, autenticação e integração com IA.
+Responsável pelas regras de negócio, APIs, autenticação e integração com
+IA.
 
 Tecnologias:
 
 - Node.js;
 - TypeScript;
-- REST API.
+- Fastify;
+- REST API;
+- Prisma ORM.
 
 ---
 
 ## Estrutura esperada
 
-```
+```text
 backend/
 
 ├── src/
+
+│   ├── modules/
+
+│   ├── shared/
+
+│   ├── config/
+
+│   └── database/
+
 │
-├── modules/
+├── prisma/
+
+│   ├── schema.prisma
+│   ├── migrations/
+│   └── seed.ts
 │
-├── shared/
-│
-├── config/
-│
-└── database/
+└── prisma.config.ts
 ```
 
 ---
@@ -205,7 +185,7 @@ O backend deve ser organizado por domínio.
 
 Exemplo:
 
-```
+```text
 modules/
 
 ├── users/
@@ -227,7 +207,7 @@ modules/
 
 Cada módulo deve possuir:
 
-```
+```text
 module/
 
 ├── controller.ts
@@ -251,29 +231,44 @@ Armazenar dados persistentes da aplicação.
 
 Tecnologia:
 
-- PostgreSQL.
+- PostgreSQL;
+- Supabase PostgreSQL.
+
+ORM:
+
+- Prisma.
 
 ---
 
-Estrutura:
+## Estrutura
 
-```
-database/
+O gerenciamento do banco pertence ao backend.
 
-├── migrations/
+```text
+backend/
 
-├── seeds/
+└── prisma/
 
-└── schema/
+    ├── schema.prisma
+
+    ├── migrations/
+
+    └── seed.ts
 ```
 
 ---
 
 ## Regras
 
-Toda alteração de estrutura deve ser feita através de migrations.
+Toda alteração estrutural deve ser feita através de migrations Prisma.
 
 Não alterar banco manualmente em produção.
+
+Exemplo:
+
+```bash
+npx prisma migrate dev
+```
 
 ---
 
@@ -292,8 +287,8 @@ Gerenciar:
 
 Estrutura:
 
-```
-backend/modules/ai/
+```text
+backend/src/modules/ai/
 
 ├── rag/
 
@@ -306,51 +301,17 @@ backend/modules/ai/
 
 ---
 
-## RAG
-
-Fluxo:
-
-```
-Syllabus
-
-↓
-
-Processamento
-
-↓
-
-Embeddings
-
-↓
-
-Vector Database
-
-↓
-
-Context Retrieval
-
-↓
-
-LLM
-
-↓
-
-Resposta
-```
-
----
-
 # 8. Documentação
 
 Toda documentação deve permanecer em:
 
-```
+```text
 docs/
 ```
 
 Estrutura:
 
-```
+```text
 docs/
 
 ├── product/
@@ -370,11 +331,11 @@ docs/
 
 Antes de criar código:
 
-1. Ler documentação relacionada;
-2. Identificar módulo afetado;
-3. Respeitar padrões existentes;
-4. Evitar criar estruturas paralelas;
-5. Documentar mudanças relevantes.
+1.  Ler documentação relacionada;
+2.  Identificar módulo afetado;
+3.  Respeitar padrões existentes;
+4.  Evitar criar estruturas paralelas;
+5.  Documentar mudanças relevantes.
 
 ---
 
@@ -387,20 +348,6 @@ Utilizar:
 - inglês para código;
 - português apenas para textos exibidos ao usuário.
 
-Exemplo:
-
-Correto:
-
-```
-simulationResult
-```
-
-Evitar:
-
-```
-resultadoSimulado
-```
-
 ---
 
 ## Componentes React
@@ -409,7 +356,7 @@ Utilizar PascalCase.
 
 Exemplo:
 
-```
+```text
 QuestionCard.tsx
 ```
 
@@ -421,7 +368,7 @@ Utilizar camelCase.
 
 Exemplo:
 
-```
+```text
 getUserPerformance()
 ```
 
@@ -433,7 +380,7 @@ Utilizar kebab-case quando aplicável.
 
 Exemplo:
 
-```
+```text
 api-client.ts
 ```
 
@@ -451,7 +398,7 @@ Nunca armazenar:
 
 Exemplo:
 
-```
+```text
 .env
 
 DATABASE_URL=
@@ -488,7 +435,8 @@ A estrutura deve permitir expansão para:
 
 A Symulus deve ser desenvolvida como um produto escalável.
 
-A IA deve auxiliar a implementação, mas todas as decisões devem permanecer alinhadas:
+A IA deve auxiliar a implementação, mas todas as decisões devem
+permanecer alinhadas:
 
 - visão do produto;
 - arquitetura;

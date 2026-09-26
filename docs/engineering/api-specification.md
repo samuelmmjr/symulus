@@ -4,9 +4,12 @@
 
 ## Status do Documento
 
-**Versão:** 1.0
+**Versão:** 1.1
 
 **Status:** Documento oficial para desenvolvimento MVP
+
+**Alteração:** Atualização do fluxo de autenticação e simulação conforme
+decisões técnicas do projeto.
 
 ---
 
@@ -24,7 +27,7 @@ A API da Symulus será responsável por:
 
 Arquitetura:
 
-```
+```text
 Frontend Web
 
      ↓
@@ -38,7 +41,7 @@ Serviços internos
      ↓
 
 Banco PostgreSQL
-     +
++
 Serviço IA/RAG
 ```
 
@@ -50,19 +53,15 @@ Serviço IA/RAG
 
 REST API
 
----
-
 ## Formato
 
 JSON
-
----
 
 ## Base URL
 
 Exemplo:
 
-```
+```text
 https://api.symulus.com/v1
 ```
 
@@ -70,49 +69,76 @@ https://api.symulus.com/v1
 
 # 3. Autenticação
 
-## Método
+A autenticação da aplicação é realizada utilizando **Supabase Auth**.
 
-JWT Token
+A API Backend não gerencia:
+
+- cadastro de senha;
+- armazenamento de senha;
+- geração própria de tokens.
 
 Fluxo:
 
-```
-Usuário realiza login
+```text
+Usuário
 
-        ↓
+↓
 
-Backend valida dados
+Frontend utiliza Supabase Auth
 
-        ↓
+↓
 
-Gera token JWT
+Supabase valida identidade
 
-        ↓
+↓
 
-Frontend utiliza token nas chamadas
+Frontend recebe JWT
+
+↓
+
+JWT enviado para API Backend
+
+↓
+
+Backend valida token
+
+↓
+
+Acesso aos recursos protegidos
 ```
 
 ---
 
 # 4. Módulo Usuários
 
-## 4.1 Criar conta
+O backend mantém apenas o perfil da aplicação.
+
+A identidade do usuário é originada pelo Supabase Auth.
+
+Relacionamento:
+
+```text
+users.id = auth.users.id
+```
+
+---
+
+# 4.1 Criar perfil de usuário
 
 ### Endpoint
 
-```
-POST /users/register
+```text
+POST /users/profile
 ```
 
 ---
 
 ## Request
 
-```
+```json
 {
- "name":"Samuel",
- "email":"samuel@email.com",
- "password":"123456"
+  "name": "Samuel",
+  "email": "samuel@email.com"
 }
 ```
 
@@ -120,54 +146,22 @@ POST /users/register
 
 ## Response
 
-```
+```json
 {
- "id":"uuid",
- "name":"Samuel",
- "email":"samuel@email.com"
+  "id": "uuid",
+  "name": "Samuel",
+  "email": "samuel@email.com"
 }
 ```
 
 ---
 
-## Regras
-
-- email deve ser único;
-- senha deve ser armazenada criptografada.
-
----
-
-# 4.2 Login
+# 4.2 Consultar usuário
 
 ### Endpoint
 
-```
-POST /users/login
-```
-
----
-
-Request:
-
-```
-{
- "email":"samuel@email.com",
- "password":"123456"
-}
-```
-
----
-
-Response:
-
-```
-{
- "access_token":"jwt_token",
- "user": {
-   "id":"uuid",
-   "name":"Samuel"
- }
-}
+```text
+GET /users/{id}
 ```
 
 ---
@@ -178,7 +172,7 @@ Response:
 
 ### Endpoint
 
-```
+```text
 GET /certifications
 ```
 
@@ -186,13 +180,13 @@ GET /certifications
 
 Response:
 
-```
+```json
 [
- {
-  "id":"uuid",
-  "name":"ISTQB CTFL",
-  "status":"ACTIVE"
- }
+  {
+    "id": "uuid",
+    "name": "ISTQB CTFL",
+    "status": "ACTIVE"
+  }
 ]
 ```
 
@@ -202,11 +196,12 @@ Response:
 
 ## Criar simulado
 
-Responsável por iniciar uma preparação.
+Responsável por iniciar uma preparação utilizando questões previamente
+validadas.
 
 ### Endpoint
 
-```
+```text
 POST /simulations
 ```
 
@@ -214,11 +209,11 @@ POST /simulations
 
 Request:
 
-```
+```json
 {
- "certification_id":"uuid",
- "quantity":5,
- "difficulty":"medium"
+  "certification_id": "uuid",
+  "quantity": 5,
+  "difficulty": "medium"
 }
 ```
 
@@ -226,19 +221,49 @@ Request:
 
 Backend:
 
-1. identifica certificação;
-2. busca contexto no RAG;
-3. solicita geração da IA;
-4. cria simulado.
+1.  identifica certificação;
+2.  busca questões aprovadas;
+3.  cria simulado;
+4.  retorna questões disponíveis.
+
+---
+
+A IA não gera questões durante a execução do simulado.
+
+O fluxo de geração ocorre previamente:
+
+```text
+Syllabus oficial
+
+↓
+
+Processamento do conteúdo
+
+↓
+
+IA gera questões
+
+↓
+
+Validação
+
+↓
+
+Banco de questões
+
+↓
+
+Simulados
+```
 
 ---
 
 Response:
 
-```
+```json
 {
- "simulation_id":"uuid",
- "total_questions":5
+  "simulation_id": "uuid",
+  "total_questions": 5
 }
 ```
 
@@ -250,7 +275,7 @@ Response:
 
 ### Endpoint
 
-```
+```text
 GET /simulations/{id}/questions
 ```
 
@@ -258,19 +283,18 @@ GET /simulations/{id}/questions
 
 Response:
 
-```
+```json
 [
- {
-  "id":"uuid",
-  "question":"Qual princípio de teste...",
-
-  "options":[
-    {
-      "id":"1",
-      "text":"Alternativa A"
-    }
-  ]
- }
+  {
+    "id": "uuid",
+    "question": "Qual princípio de teste...",
+    "options": [
+      {
+        "id": "uuid",
+        "text": "Alternativa A"
+      }
+    ]
+  }
 ]
 ```
 
@@ -278,7 +302,7 @@ Response:
 
 Importante:
 
-A resposta correta não deve ser enviada antes do usuário responder.
+A resposta correta nunca deve ser enviada antes do usuário responder.
 
 ---
 
@@ -286,7 +310,7 @@ A resposta correta não deve ser enviada antes do usuário responder.
 
 ### Endpoint
 
-```
+```text
 POST /answers
 ```
 
@@ -294,10 +318,10 @@ POST /answers
 
 Request:
 
-```
+```json
 {
- "simulation_question_id":"uuid",
- "selected_option_id":"uuid"
+  "simulation_question_id": "uuid",
+  "selected_option_id": "uuid"
 }
 ```
 
@@ -305,13 +329,11 @@ Request:
 
 Response:
 
-```
+```json
 {
- "correct":true,
-
- "explanation":"Segundo o syllabus..."
-
- "source":"Chapter 1.3"
+  "correct": true,
+  "explanation": "Segundo o syllabus...",
+  "source": "Chapter 1.3"
 }
 ```
 
@@ -321,7 +343,7 @@ Response:
 
 ### Endpoint
 
-```
+```text
 POST /simulations/{id}/finish
 ```
 
@@ -329,13 +351,11 @@ POST /simulations/{id}/finish
 
 Response:
 
-```
+```json
 {
- "score":85,
-
- "correct_answers":17,
-
- "total_questions":20
+  "score": 85,
+  "correct_answers": 17,
+  "total_questions": 20
 }
 ```
 
@@ -347,7 +367,7 @@ Response:
 
 ### Endpoint
 
-```
+```text
 GET /users/{id}/performance
 ```
 
@@ -355,17 +375,12 @@ GET /users/{id}/performance
 
 Response:
 
-```
+```json
 {
- "certification":"ISTQB CTFL",
-
- "progress":72,
-
- "strengths":["Fundamentals"
- ],
-
- "weaknesses":["Testing Techniques"
- ]
+  "certification": "ISTQB CTFL",
+  "progress": 72,
+  "strengths": ["Fundamentals"],
+  "weaknesses": ["Testing Techniques"]
 }
 ```
 
@@ -377,7 +392,7 @@ Response:
 
 ### Endpoint
 
-```
+```text
 GET /users/{id}/recommendations
 ```
 
@@ -385,13 +400,12 @@ GET /users/{id}/recommendations
 
 Response:
 
-```
+```json
 [
- {
-  "topic":"Boundary Value Analysis",
-
-  "message":"Recomendamos revisar capítulo 4"
- }
+  {
+    "topic": "Boundary Value Analysis",
+    "message": "Recomendamos revisar capítulo 4"
+  }
 ]
 ```
 
@@ -399,7 +413,9 @@ Response:
 
 # 12. APIs internas de IA
 
-Essas APIs não serão expostas ao usuário.
+Estas APIs não são expostas ao usuário final.
+
+São utilizadas para processamento interno.
 
 ---
 
@@ -407,86 +423,61 @@ Essas APIs não serão expostas ao usuário.
 
 Endpoint interno:
 
-```
+```text
 POST /ai/generate-question
 ```
 
 ---
 
-Request:
+Responsabilidade:
 
-```
-{
- "certification":"ISTQB CTFL",
-
- "topic":"Testing Techniques",
-
- "difficulty":"medium",
-
- "quantity":5
-}
-```
-
----
-
-Response:
-
-```
-{
- "questions":[]
-}
-```
+- utilizar syllabus oficial;
+- utilizar contexto RAG;
+- gerar questões;
+- armazenar referência da fonte.
 
 ---
 
 # 13. Fluxo completo de um simulado
 
-```
+```text
 Usuário
 
- ↓
+↓
+
+Escolhe certificação
+
+↓
 
 POST /simulations
 
- ↓
+↓
 
-Backend
+Backend busca questões aprovadas
 
- ↓
+↓
 
-Busca syllabus
+Retorna simulado
 
- ↓
-
-RAG
-
- ↓
-
-IA gera questões
-
- ↓
-
-Salva banco
-
- ↓
-
-Retorna questões
-
- ↓
+↓
 
 Usuário responde
 
- ↓
+↓
 
 POST /answers
 
- ↓
+↓
 
 Resultado
 
- ↓
+↓
 
 Atualiza desempenho
+
+↓
+
+Gera recomendações
 ```
 
 ---
@@ -495,14 +486,12 @@ Atualiza desempenho
 
 Padrão:
 
-```
+```json
 {
- "error":
- {
-  "code":"INVALID_REQUEST",
-
-  "message":"Dados inválidos"
- }
+  "error": {
+    "code": "INVALID_REQUEST",
+    "message": "Dados inválidos"
+  }
 }
 ```
 
@@ -512,7 +501,7 @@ Padrão:
 
 Requisitos:
 
-- validar autenticação;
+- validar JWT do Supabase Auth;
 - limitar chamadas;
 - proteger endpoints internos da IA;
 - validar permissões.
@@ -523,9 +512,7 @@ Requisitos:
 
 ## APIs obrigatórias
 
-✅ Cadastro
-
-✅ Login
+✅ Perfil de usuário
 
 ✅ Certificações
 
@@ -557,38 +544,40 @@ Requisitos:
 
 # Resumo
 
-A API da Symulus deve permitir:
+A API da Symulus permite:
 
-```
+```text
 Usuário
-  ↓
+
+↓
+
 Escolhe certificação
-  ↓
-Recebe simulado inteligente
-  ↓
+
+↓
+
+Realiza simulado inteligente
+
+↓
+
 Responde questões
-  ↓
+
+↓
+
 Recebe análise
-  ↓
+
+↓
+
 Evolui sua preparação
 ```
 
 ---
 
-## Próximo documento recomendado
+# Status
 
-Agora temos:
+Documento alinhado com:
 
-✅ Produto
-
-✅ UX
-
-✅ Design
-
-✅ Arquitetura
-
-✅ IA/RAG
-
-✅ Modelo de Dados
-
-✅ APIs
+- Supabase Auth;
+- Prisma ORM;
+- PostgreSQL;
+- arquitetura RAG;
+- modelo de dados MVP.
