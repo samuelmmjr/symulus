@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -10,4 +5,204 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+enum CertificationStatus {
+  ACTIVE
+  COMING_SOON
+}
+
+enum SyllabusStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum QuestionDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum QuestionGenerationType {
+  AI
+  MANUAL
+}
+
+enum SimulationStatus {
+  STARTED
+  COMPLETED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  simulations     Simulation[]
+  performances    UserPerformance[]
+  recommendations AIRecommendation[]
+
+  @@map("users")
+}
+
+model Certification {
+  id          String              @id @default(uuid())
+  name        String
+  provider    String
+  description String?
+  status      CertificationStatus
+  createdAt   DateTime            @default(now()) @map("created_at")
+
+  syllabusDocuments SyllabusDocument[]
+  questions         Question[]
+  simulations       Simulation[]
+  performances      UserPerformance[]
+  recommendations   AIRecommendation[]
+
+  @@map("certifications")
+}
+
+model SyllabusDocument {
+  id              String         @id @default(uuid())
+  certificationId String         @map("certification_id")
+  title           String
+  version         String
+  fileUrl         String         @map("file_url")
+  status          SyllabusStatus
+  createdAt       DateTime       @default(now()) @map("created_at")
+
+  certification Certification     @relation(fields: [certificationId], references: [id])
+  chapters      SyllabusChapter[]
+
+  @@map("syllabus_documents")
+}
+
+model SyllabusChapter {
+  id            String @id @default(uuid())
+  syllabusId    String @map("syllabus_id")
+  chapterNumber String @map("chapter_number")
+  title         String
+  content       String
+
+  syllabus        SyllabusDocument @relation(fields: [syllabusId], references: [id])
+  knowledgeChunks KnowledgeChunk[]
+  questions       Question[]
+
+  @@map("syllabus_chapters")
+}
+
+model KnowledgeChunk {
+  id        String   @id @default(uuid())
+  chapterId String   @map("chapter_id")
+  content   String
+  metadata  Json
+  createdAt DateTime @default(now()) @map("created_at")
+
+  chapter SyllabusChapter @relation(fields: [chapterId], references: [id])
+
+  @@map("knowledge_chunks")
+}
+
+model Question {
+  id              String                 @id @default(uuid())
+  certificationId String                 @map("certification_id")
+  chapterId       String                 @map("chapter_id")
+  questionText    String                 @map("question_text")
+  difficulty      QuestionDifficulty
+  generationType  QuestionGenerationType @map("generation_type")
+  sourceReference String                 @map("source_reference")
+  createdAt       DateTime               @default(now()) @map("created_at")
+
+  certification       Certification        @relation(fields: [certificationId], references: [id])
+  chapter             SyllabusChapter      @relation(fields: [chapterId], references: [id])
+  options             QuestionOption[]
+  simulationQuestions SimulationQuestion[]
+
+  @@map("questions")
+}
+
+model QuestionOption {
+  id         String  @id @default(uuid())
+  questionId String  @map("question_id")
+  optionText String  @map("option_text")
+  isCorrect  Boolean @map("is_correct")
+
+  question Question @relation(fields: [questionId], references: [id])
+  answers  Answer[]
+
+  @@map("question_options")
+}
+
+model Simulation {
+  id              String           @id @default(uuid())
+  userId          String?          @map("user_id")
+  certificationId String           @map("certification_id")
+  totalQuestions  Int              @map("total_questions")
+  score           Decimal?
+  status          SimulationStatus
+  startedAt       DateTime         @map("started_at")
+  finishedAt      DateTime?        @map("finished_at")
+
+  user          User?                @relation(fields: [userId], references: [id])
+  certification Certification        @relation(fields: [certificationId], references: [id])
+  questions     SimulationQuestion[]
+
+  @@map("simulations")
+}
+
+model SimulationQuestion {
+  id           String @id @default(uuid())
+  simulationId String @map("simulation_id")
+  questionId   String @map("question_id")
+  orderNumber  Int    @map("order_number")
+
+  simulation Simulation @relation(fields: [simulationId], references: [id])
+  question   Question   @relation(fields: [questionId], references: [id])
+  answers    Answer[]
+
+  @@map("simulation_questions")
+}
+
+model Answer {
+  id                   String   @id @default(uuid())
+  simulationQuestionId String   @map("simulation_question_id")
+  selectedOptionId     String   @map("selected_option_id")
+  isCorrect            Boolean  @map("is_correct")
+  answeredAt           DateTime @map("answered_at")
+
+  simulationQuestion SimulationQuestion @relation(fields: [simulationQuestionId], references: [id])
+  selectedOption     QuestionOption     @relation(fields: [selectedOptionId], references: [id])
+
+  @@map("answers")
+}
+
+model UserPerformance {
+  id                 String   @id @default(uuid())
+  userId             String   @map("user_id")
+  certificationId    String   @map("certification_id")
+  topic              String
+  accuracyPercentage Decimal  @map("accuracy_percentage")
+  totalQuestions     Int      @map("total_questions")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  user          User          @relation(fields: [userId], references: [id])
+  certification Certification @relation(fields: [certificationId], references: [id])
+
+  @@map("user_performance")
+}
+
+model AIRecommendation {
+  id                 String   @id @default(uuid())
+  userId             String   @map("user_id")
+  certificationId    String   @map("certification_id")
+  relatedTopic       String   @map("related_topic")
+  recommendationText String   @map("recommendation_text")
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  user          User          @relation(fields: [userId], references: [id])
+  certification Certification @relation(fields: [certificationId], references: [id])
+
+  @@map("ai_recommendations")
 }
